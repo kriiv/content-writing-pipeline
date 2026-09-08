@@ -1,58 +1,44 @@
-# SEO Page Builder — a Claude Code skill
+# Content Writing Pipeline
 
-A [Claude Code skill](https://docs.claude.com/en/docs/claude-code/skills) that builds deeply-researched SEO pages by combining **real search data** (Ahrefs / DataForSEO) with **real social data** (verbatim, source-linked quotes from Reddit, Hacker News, X, and more).
+A skill for researching, drafting, editing, and refreshing articles, SEO pages, emails, newsletters, social posts, documentation, and other written content. Adapted from [SEO Page Builder](https://github.com/octolens/seo-page-builder).
 
-It's the methodology behind pages that rank #1 for their target keywords on [octolens.com](https://octolens.com) — generalized so it works for any site and any page type:
+## How it works
 
-- `[Competitor] alternatives` roundups
-- `Best [category] tools` listicles
-- `[A] vs [B]` comparison pages
-- Pricing guides, how-to guides, glossary pages
+**Scope → Research → Gather evidence → Verify → Write and edit → Prepare delivery → QA**
 
-## The idea in one paragraph
+The original seven-stage pipeline adapts to the assignment: lightweight for a short email, thorough for a researched comparison. SEO research and site integration run when relevant. A natural-voice editing pass removes generic phrasing while preserving meaning and voice.
 
-Thin AI-generated pages don't rank, because they contain nothing a language model couldn't produce from a prompt. This skill forces two kinds of evidence into every page: **search data** (volumes, difficulty, and a live SERP read) decides what to build and how to structure it, and **primary-source data** (verbatim quotes from real users, every one linked to its source) gives the page content no competitor can copy and no LLM can hallucinate. Everything ships as a draft or PR — a human always makes the publish call.
+## Optional integrations
 
-## Install
+| Tool | Function | Configuration |
+|---|---|---|
+| Perplexity API | Discover sources, audience experiences, and questions; synthesize research and verify claims against originals | `PERPLEXITY_API_KEY` |
+| Moz | Supported SEO metrics | `MOZ_API_TOKEN` or `MOZ_API_KEY` |
+| Ahrefs | Supported SEO metrics | `AHREFS_API_KEY` |
+| DataForSEO | Supported SEO metrics and SERP research | `DATAFORSEO_LOGIN` + `DATAFORSEO_PASSWORD` |
+| Semrush | Supported SEO metrics | `SEMRUSH_API_KEY` |
+| [watermarks-remover](references/text-cleanup.md) | Inspect Unicode artifacts, clean a separate copy, and review changes before QA | `WATERMARKS_REMOVER_DIR` pointing to a trusted checkout |
 
-Copy this folder into your project's skills directory:
+The skill selects SEO tools from non-empty environment credentials. If several are configured, it checks Moz → Ahrefs → DataForSEO → Semrush for the requested capability, unless you specify a provider. Missing metrics stay marked unavailable; Perplexity can still support qualitative research.
+
+Integrations are optional and documented, not bundled or automatically installed. Text cleanup does not prove removal of statistical watermarks or guarantee AI-detector results.
+
+## Install and use
+
+For Claude Code:
 
 ```bash
 mkdir -p .claude/skills
-git clone https://github.com/octolens/seo-page-builder .claude/skills/seo-page-builder
+git clone https://github.com/kriiv/content-writing-pipeline .claude/skills/content-writing-pipeline
 ```
 
-Then in Claude Code, just ask for a page:
+Then request a writing task or invoke `content-writing-pipeline` explicitly:
 
-> Build a "best CI/CD tools" page
+- “Turn these notes into a concise customer email.”
+- “Edit this newsletter while preserving my voice.”
+- “Build a researched product comparison with verified pricing.”
 
-Claude will pick up the skill automatically, or invoke it explicitly with `/seo-page-builder`.
-
-## Requirements
-
-All data sources are optional — the skill adapts to what you have and asks instead of guessing when it has nothing:
-
-| Purpose | Works with | Env vars |
-|---|---|---|
-| Keyword volumes, difficulty, SERPs | Ahrefs API v3, DataForSEO | `AHREFS_API_KEY` or `DATAFORSEO_LOGIN` + `DATAFORSEO_PASSWORD` |
-| Social / primary-source mentions | [Octolens Search API](https://octolens.com), or manual Reddit/HN mining | `OCTOLENS_API_KEY` |
-
-## What it will never do
-
-- Fabricate quotes, stats, or pricing — every quote is verbatim with a verified, working source link
-- Reuse content across sibling pages
-- Mass-generate templated pages
-- Auto-publish anything
-
-## The pipeline
-
-1. **Scope** — page type, new vs. refresh, cannibalization check
-2. **Keyword research** — volumes, difficulty, and a live SERP read that dictates format, length, and FAQ topics
-3. **Primary-source mining** — 6–10 verbatim, linked user quotes; the dominant pain becomes the page's hook
-4. **Fact verification** — every price and claim checked against the official source at write time
-5. **Write** — SERP-matching structure, honest pros/cons, vendor disclosure, full schema (Article / ItemList / FAQPage)
-6. **Site integration** — sitemap, internal links, redirects, assets, meta
-7. **QA** — link checks, consistency checks, honesty pass, then handoff as a draft
+See [SKILL.md](SKILL.md) for the full workflow. Deliverables default to drafts; publishing or sending requires explicit authorization.
 
 ## License
 

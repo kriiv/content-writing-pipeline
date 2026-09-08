@@ -25,10 +25,28 @@ Use available tools; no provider is required. Never invent missing metrics. If e
 | Need | Sources | Typical environment variables |
 |---|---|---|
 | Topic discovery and research synthesis | Perplexity API, available web search | `PERPLEXITY_API_KEY` |
-| Keyword volume, difficulty, CPC, rankings | Ahrefs, DataForSEO, Semrush | `AHREFS_API_KEY`, `DATAFORSEO_LOGIN` / `DATAFORSEO_PASSWORD` |
+| SEO metrics (availability varies by provider and plan) | Moz, Ahrefs, DataForSEO, Semrush | See credential selection below |
 | Search intent and current SERPs | SEO provider or available web search | Provider-specific |
 | Audience experiences and questions | Perplexity, public Reddit/HN/forum/review searches, supplied interviews | `PERPLEXITY_API_KEY` (optional) |
 | Fact verification | Original studies, official pricing and documentation, source material | — |
+
+### Select SEO tools from available credentials
+
+Before SEO research, check which of these environment variables are non-empty without printing their values. These are this skill's configuration names; pass their values using the provider's documented authentication method.
+
+| Provider | Required environment variables |
+|---|---|
+| Moz | `MOZ_API_TOKEN` (preferred) or `MOZ_API_KEY` (alias for the token) |
+| Ahrefs | `AHREFS_API_KEY` |
+| DataForSEO | Both `DATAFORSEO_LOGIN` and `DATAFORSEO_PASSWORD` |
+| Semrush | `SEMRUSH_API_KEY` |
+
+- Use the configured provider automatically; do not ask for Ahrefs credentials when a usable Moz token is available. Empty values and incomplete credential pairs do not count as configured. For Moz, prefer `MOZ_API_TOKEN` when both aliases are set.
+- Honor an explicit user choice first. Otherwise, if several providers are configured, select the first that supports the requested operation in this fixed order: Moz, Ahrefs, DataForSEO, Semrush. This is a routing default, not a quality ranking. Do not query every provider for the same data.
+- Check current official API documentation and account access before choosing endpoints, metrics, markets, or authentication. For Moz, start with the [API documentation](https://moz.com/api/docs). A configured token does not guarantee access to every endpoint. Do not assume link metrics, keyword metrics, CPC, rankings, and live SERPs are interchangeable or all available from one API.
+- If an operation is unsupported or access fails, report the limitation and try the next configured provider that supports it within the task's budget. Respect rate limits; do not repeatedly retry invalid credentials or exhausted quotas. If the user explicitly restricted the provider, do not switch outside that restriction.
+- If no usable provider supplies a metric, label it unavailable and continue with Perplexity or web search for qualitative research. Never present generated estimates as measured SEO data. Keep each metric's provider, market, and date; do not average provider-specific difficulty scores or silently mix them in comparisons.
+- Do not dump the environment, expose credentials, or send one provider's credentials to another. Check only the variable names listed above.
 
 ### Using Perplexity for research
 
@@ -63,7 +81,7 @@ For existing web pages, preserve the URL and original publication date unless a 
 2. For researched content, investigate the central question, credible alternative views, and a useful contribution: a worked example, comparison, original observation, calculation, or clearer synthesis.
 3. **For SEO content**, retain the search workflow:
    - Build primary and secondary keyword candidates around the topic and reader intent.
-   - Pull available volume, difficulty, CPC, and current rankings. Record provider, market, and date. If unavailable, mark metrics unavailable and proceed with qualitative research.
+   - Select the provider using the credential rules above, then pull supported volume, difficulty, CPC, and ranking data. Record provider, market, and date. If unavailable, mark metrics unavailable and proceed with qualitative research.
    - Inspect current search results for intent, formats, coverage gaps, freshness, and real questions. Use this as evidence for editorial decisions, not a requirement to copy competitors' length or structure.
    - Check nearby site content for overlapping intent. Recommend refreshing, consolidating, or differentiating pages using their purpose, content, rankings, and SERP overlap; no single overlap threshold decides this.
    - Record the target keyword, supporting topics, format, and proposed angle. Include a year only when the content is time-sensitive and can be maintained.

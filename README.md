@@ -13,8 +13,13 @@ The original seven-stage pipeline adapts to the assignment: lightweight for a sh
 | Tool | Function | Configuration |
 |---|---|---|
 | Perplexity API | Discover sources, audience experiences, and questions; synthesize research and verify claims against originals | `PERPLEXITY_API_KEY` |
-| Ahrefs / DataForSEO | Keyword metrics, rankings, and SERP research | Provider API credentials |
+| Moz | Supported SEO metrics | `MOZ_API_TOKEN` or `MOZ_API_KEY` |
+| Ahrefs | Supported SEO metrics | `AHREFS_API_KEY` |
+| DataForSEO | Supported SEO metrics and SERP research | `DATAFORSEO_LOGIN` + `DATAFORSEO_PASSWORD` |
+| Semrush | Supported SEO metrics | `SEMRUSH_API_KEY` |
 | [watermarks-remover](references/text-cleanup.md) | Inspect Unicode artifacts, clean a separate copy, and review changes before QA | `WATERMARKS_REMOVER_DIR` pointing to a trusted checkout |
+
+The skill selects SEO tools from non-empty environment credentials. If several are configured, it checks Moz → Ahrefs → DataForSEO → Semrush for the requested capability, unless you specify a provider. Missing metrics stay marked unavailable; Perplexity can still support qualitative research.
 
 Integrations are optional and documented, not bundled or automatically installed. Text cleanup does not prove removal of statistical watermarks or guarantee AI-detector results.
 
